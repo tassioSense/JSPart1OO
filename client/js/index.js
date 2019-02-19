@@ -32,5 +32,7 @@ document.querySelector(".form").addEventListener("submit", function(event){ //cr
     campo[2].value = 0;
     campo[0].focus();
     
+    alert("fazendo teste direto do GitHUb");
+    
 
 });
