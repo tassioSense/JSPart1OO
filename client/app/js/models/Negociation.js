@@ -3,7 +3,7 @@ class Negociation {
     constructor(data, quantidade,valor){
         //o _ , por covenção, simboliza um atributo private
 
-        this._data = new Data(data.getTime()); //instanciando um novo objeto para garantir que o usuário não irá alterar a data
+        this._data = new Date(data.getTime()); //instanciando um novo objeto para garantir que o usuário não irá alterar a data
         this._quantidade = quantidade;
         this._valor = valor;
 
