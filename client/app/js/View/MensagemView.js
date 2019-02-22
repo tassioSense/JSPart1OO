@@ -6,7 +6,7 @@ class MensagemView extends View {
 
     }
 
-    _template (modelText) { //perarando o HTML para receber a mensagem 
+    template (modelText) { //perarando o HTML para receber a mensagem 
 
         return modelText.texto ? `<p class="alert alert-info"> ${modelText.texto} </p>` : `<p></p>` ;
 

@@ -23,9 +23,12 @@ class NegociationController {
 
         let negociacao1 = this._criaNegociacao();
         this._listaNegociacoes.adiciona(negociacao1);
-        this._mensagemView.update(this._mensagem.texto = "Adicionamos sua negociação. Obrigado :)"); //atualizando a Mensagem
+        
         this._negocicoesToView.update(this._listaNegociacoes); //aqui nossa Array tem valores, o que acionaram as tr e td do método _template
-
+        
+        this._mensagem.texto = "Adicionamos sua negociação. Obrigado :)"
+        this._mensagemView.update(this._mensagem); //atualizando a Mensagem
+                
         this._limpaFormulario();
 
 

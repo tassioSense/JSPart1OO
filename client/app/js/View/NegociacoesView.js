@@ -7,7 +7,7 @@ class NegociacoesView extends View {
 
     }
 
-    _template(listaNecociacao) {
+    template(listaNecociacao) {
         //usando template string 
         return `<table class="table table-hover table-bordered">
                 <thead>
