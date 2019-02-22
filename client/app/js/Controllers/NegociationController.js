@@ -7,10 +7,32 @@ class NegociationController {
         this._inputData = $("#data");
         this._inputQuantidade = $("#quantidade");
         this._inputValor = $("#valor");
-        this._listaNegociacoes = new ListaNegociacoes((model)=>{ //observe que estamos passando a classNegociacaoController como parametro da instancia ListaNegociacoes, pois colocamos this
+       /* this._listaNegociacoes = new ListaNegociacoes((model)=>{ //observe que estamos passando a classNegociacaoController como parametro da instancia ListaNegociacoes, pois colocamos this
            //outra utilidade das Arrow functions: elas são léxicas, portanto
            // ela mantém o this acionado do escopo (neste caso, a class NegociationController) mesmo se ele for chamado em outro escopo. Neste caso, aliás, esta função é chamada na class ListaNeociacoes
             this._negocicoesToView.update(model);
+
+        });*/
+
+        let referenciaController = this;
+        this._listaNegociacoes = new Proxy(new ListaNegociacoes (new Date(),1,100), {
+                      
+            get: function(target, prop, receiver) {
+                if(['adiciona', 'esvazia'].includes(prop) && typeof(target[prop]) == typeof(Function)) {
+                    //se [adiciona e esvazia].são(propriedades) E a O tipo de prop instanciaDeclarada = Ao tipo de propriedade de um Function (ou seja, é um método/função) 
+
+                    return function() {
+                    
+                        Reflect.apply(target[prop], target, arguments); //trocando o target da instancia, pelo target do proxy  , arguments é um variável implicita que obtem todos os parametros da instancia delclarado no Proxy
+                                                                        //portanto, target agora é o Proxy de Lista de Negociações
+                        
+                        referenciaController._negocicoesToView.update(target); 
+                    }
+                }
+                    return Reflect.get(target, prop, receiver);
+            }
+
+
 
         });
 

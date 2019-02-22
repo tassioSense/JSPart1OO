@@ -59,6 +59,47 @@
     <script src="app/js/View/MensagemView.js"></script>
 
     <script> let negociacao = new NegociationController;  </script>
+
+    <script> 
+
+    let negociacaoProxy = new Proxy(new ListaNegociacoes (new Date(),1,100), {
+                     
+        //ESTE CÓDIGO É APENAS PARA EFEITOS DIDÁTICOS
+        
+                        //(intanciaInciada, propriedadeDaInstancia, referenciaAoProxy)
+
+       /* get: function(target, prop, receiver) { //essa função é chamada sempre que alguém chama algum método da instancia declarada
+            console.log(`a propriedade "${prop}" foi interceptada`); //usando as artimanhas do proxy, imprimindo a propriedade
+            return Reflect.get(target, prop, receiver);
+        }*/
+
+        /*função para quando alguém altera um atributo na instancia declarada
+        set: function(target, prop, value, receiver) { 
+            console.log(`valor anterior: ${target[prop]} novo valor: ${value}`); //usando as artimanhas do proxy, imprimindo a propriedade
+            return Reflect.set(target, prop, value, receiver);
+
+        }*/
+
+        get: function(target, prop, receiver) {
+            if(['adiciona', 'esvazia'].includes(prop) && typeof(target[prop]) == typeof(Function)) {
+                //se [adiciona e esvazia].são(propriedades) E a O tipo de prop instanciaDeclarada = Ao tipo de propriedade de um Function (ou seja, é um método/função) 
+            
+                return function() {
+                
+                    Reflect.apply(target[prop], target, arguments); //trocando o target da instancia, pelo target do proxy  , arguments é um variável implicita que obtem todos os parametros da instancia delclarado no Proxy
+                }
+            }
+            return Reflect.get(target, prop, receiver);
+        }
+
+
+
+    });
+
+    negociacaoProxy.adiciona(new Negociation(new Date(), 1, 100));
+    
+
+    </script>
     
     
 </body>
