@@ -53,4 +53,9 @@ class NegociationController {
 
     }
 
+    apaga () {
+
+        
+    }
+ 
 }

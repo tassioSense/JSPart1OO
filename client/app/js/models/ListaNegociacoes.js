@@ -17,4 +17,8 @@ class ListaNegociacoes {
         return [].concat(this._negociacoes); //blindando nosso modelo de negocio
     }
 
+    esvazia () {
+
+        this._negociacoes = [];
+    }
 }
