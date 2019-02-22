@@ -1,8 +1,8 @@
-class MensagemView{
-
+class MensagemView extends View {
+//herdando da class View
     constructor(elemento) {
 
-        this._elemento = elemento;
+        super(elemento); //passando o parametro para a classe pai
 
     }
 
@@ -12,11 +12,7 @@ class MensagemView{
 
     }
 
-    _update() {
-        this._elemento.innerHTML = this._template(model);
-
-    }
-
+    
 
 
 }

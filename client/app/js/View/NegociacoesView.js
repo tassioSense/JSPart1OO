@@ -1,8 +1,9 @@
-class NegociacoesView {
+class NegociacoesView extends View {
+    //herdando da class View
 
     constructor (elemento){
 
-        this._elementoNegociacoes = elemento;
+        super(elemento);  // passando o parametro para a class pai
 
     }
 
@@ -50,10 +51,6 @@ class NegociacoesView {
         </table>`
     }
 
-    _update(listaNecociacao) { //recebemos uma lista de negociações em Array
-        //innerHTML converte um string em elemento HTML, desde que estés esteja com a semantica correta. assim conseguimos jogar a string no DOM e converte-la em strutura web
-
-        this._elementoNegociacoes.innerHTML = this._template(listaNecociacao); //vamos passar a nova lista para o template e colocar os valor dentro da tabela.
-    }
+    
 
 }
