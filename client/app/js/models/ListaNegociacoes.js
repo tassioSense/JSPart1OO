@@ -1,11 +1,16 @@
 class ListaNegociacoes {
 
-    constructor() {
+    constructor (IniciaView) {
         this._negociacoes = [];
+        this._iniciaView = IniciaView;
+        
     }
 
     adiciona(negociacao) {
+        
         this._negociacoes.push(negociacao);
+       this._iniciaView(this); //como usamos uma Arrow Function, o this aqui é referente a class NecociationController
+               
     }
 
     get negociacoes() {
@@ -20,5 +25,6 @@ class ListaNegociacoes {
     esvazia () {
 
         this._negociacoes = [];
+        this._iniciaView(this); //como usamos uma Arrow Function, o this aqui é referente a class NecociationController
     }
 }
