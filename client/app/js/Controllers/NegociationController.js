@@ -14,37 +14,18 @@ class NegociationController {
 
         });*/
 
-        let referenciaController = this;
-        this._listaNegociacoes = new Proxy(new ListaNegociacoes (new Date(),1,100), {
-                      
-            get: function(target, prop, receiver) {
-                if(['adiciona', 'esvazia'].includes(prop) && typeof(target[prop]) == typeof(Function)) {
-                    //se [adiciona e esvazia].são(propriedades) E a O tipo de prop instanciaDeclarada = Ao tipo de propriedade de um Function (ou seja, é um método/função) 
-
-                    return function() {
-                    
-                        Reflect.apply(target[prop], target, arguments); //trocando o target da instancia, pelo target do proxy  , arguments é um variável implicita que obtem todos os parametros da instancia delclarado no Proxy
-                                                                        //portanto, target agora é o Proxy de Lista de Negociações
-                        
-                        referenciaController._negocicoesToView.update(target); 
-                    }
-                }
-                    return Reflect.get(target, prop, receiver);
-            }
-
-            /*Como Reflect.apply funciona? O primeiro parâmetro é o método ou função que desejamos invocar. 
-            O segundo parâmetro é o contexto que o método ou função adotará, ou seja,
-            o valor que será assumido pelo this. Por fim, o último parâmetro é um array que contém todos os parâmetros que o método passado como primeiro parâmetro receberá.
-            Como ele não recebe parâmetro nenhum, passamos um array vazio. */
-
-
-        });
+        this._listaNegociacoes = ProxyFactory.create(new ListaNegociacoes(),['adiciona', 'esvazia'], model =>
+                this._negocicoesToView.update(model));
 
 
         this._negocicoesToView = new NegociacoesView($("#negociacoesView"));
         this._negocicoesToView.update(this._listaNegociacoes); //logo quando carregamos, inserimos os títulos da tabela. Neste momento a lista de Negociações está vazia, mas precisamos renderizar a table em si
                                                                 //já no método adiciona, vamos adicionar a lista atualizada, nela conterá informações dentro da Array
-        this._mensagem = new Mensagem();
+        this._mensagem = ProxyFactory.create(new Mensagem(), ["texto"], model =>
+            this._mensagemView.update(model));
+
+
+
         this._mensagemView = new MensagemView($("#mensagemView"));
         this._mensagemView.update(this._mensagem);
         
@@ -59,9 +40,7 @@ class NegociationController {
         
         //this._negocicoesToView.update(this._listaNegociacoes); //aqui nossa Array tem valores, o que acionaram as tr e td do método _template
         
-        this._mensagem.texto = "Adicionamos sua negociação. Obrigado :)"
-        this._mensagemView.update(this._mensagem); //atualizando a Mensagem
-                
+        this._mensagem.texto = "Adicionamos sua negociação. Obrigado :)"       
         this._limpaFormulario();
 
 
@@ -89,8 +68,6 @@ class NegociationController {
     apaga () {
         this._listaNegociacoes.esvazia();
         this._mensagem.texto = "Negociações apagadas";
-        this._mensagemView(this._mensagem);
-        
     }
  
 }
