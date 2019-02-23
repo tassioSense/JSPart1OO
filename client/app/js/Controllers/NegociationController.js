@@ -14,20 +14,15 @@ class NegociationController {
 
         });*/
 
-        this._listaNegociacoes = ProxyFactory.create(new ListaNegociacoes(),['adiciona', 'esvazia'], model =>
-                this._negocicoesToView.update(model));
+        //atualizando a view para as negociações e antes de ter negociações
+        this._listaNegociacoes = new Bind (new ListaNegociacoes(), new NegociacoesView($("#negociacoesView")), 'adiciona', 'esvazia')
+                                                                                                                //aqui vamos fazer uso do Rest Operator
+        
+        //atualizando a view com mensagem
+        this._mensagem = new Bind (new Mensagem(), this._mensagemView = new MensagemView($("#mensagemView")) , "texto");
+                                                                                                            //aqui vamos fazer uso do Rest Operator
 
 
-        this._negocicoesToView = new NegociacoesView($("#negociacoesView"));
-        this._negocicoesToView.update(this._listaNegociacoes); //logo quando carregamos, inserimos os títulos da tabela. Neste momento a lista de Negociações está vazia, mas precisamos renderizar a table em si
-                                                                //já no método adiciona, vamos adicionar a lista atualizada, nela conterá informações dentro da Array
-        this._mensagem = ProxyFactory.create(new Mensagem(), ["texto"], model =>
-            this._mensagemView.update(model));
-
-
-
-        this._mensagemView = new MensagemView($("#mensagemView"));
-        this._mensagemView.update(this._mensagem);
         
     }                       
 
