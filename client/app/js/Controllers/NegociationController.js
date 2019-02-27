@@ -43,7 +43,24 @@ class NegociationController {
 
     importaNegociacoes() {
 
-        let service = new NegociacaoService();
+        let service = new NegociacaoService(); //deontro da classe temos new Promise
+
+        //lembrando que promise são assicronas
+
+        Promise.all([service.obterNegociacoesDaSemana(), service.obterNegociacoesDaSemanaAnterior(), service.obterNegociacoesDaSemanaRetrasada()])
+            .then(negociacoes => {
+                negociacoes
+                  .reduce((arrayAchatado, array) => arrayAchatado.concat(array), []) 
+                  .forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+                this._mensagem.texto = 'Negociações importadas com sucesso';
+            })
+            .catch(erro => this._mensagem.texto = erro);  //se não fizermos o reduce, a then retornará um Array para cada função declarada no all, cada array com uma negociação
+                                                          //mas queremos apenas um array com uma lista de negociações
+        
+        
+
+
+    /*  COMENTADO PARA FINS DIDÁTICOS
 
         service.obterNegociacoesDaSemana((erro, negociacoes) => {
             if(erro) {
@@ -79,7 +96,7 @@ class NegociationController {
 
 
         
-        });
+        }); */
         
     }
 
