@@ -7,6 +7,7 @@ class NegociationController {
         this._inputData = $("#data");
         this._inputQuantidade = $("#quantidade");
         this._inputValor = $("#valor");
+        this._ordemAtual = '';
        /* this._listaNegociacoes = new ListaNegociacoes((model)=>{ //observe que estamos passando a classNegociacaoController como parametro da instancia ListaNegociacoes, pois colocamos this
            //outra utilidade das Arrow functions: elas são léxicas, portanto
            // ela mantém o this acionado do escopo (neste caso, a class NegociationController) mesmo se ele for chamado em outro escopo. Neste caso, aliás, esta função é chamada na class ListaNeociacoes
@@ -15,7 +16,7 @@ class NegociationController {
         });*/
 
         //atualizando a view para as negociações e antes de ter negociações
-        this._listaNegociacoes = new Bind (new ListaNegociacoes(), new NegociacoesView($("#negociacoesView")), 'adiciona', 'esvazia')
+        this._listaNegociacoes = new Bind (new ListaNegociacoes(), new NegociacoesView($("#negociacoesView")), 'adiciona', 'esvazia', 'ordena', 'inverteOrdem')
                                                                                                                 //aqui vamos fazer uso do Rest Operator
         
         //atualizando a view com mensagem
@@ -123,5 +124,21 @@ class NegociationController {
         this._listaNegociacoes.esvazia();
         this._mensagem.texto = "Negociações apagadas";
     }
+
+    ordena(coluna) {
+
+        if(this._ordemAtual == coluna) {
+            
+            this._listaNegociacoes.inverteOrdem();
+
+        } else {
+            
+            this._listaNegociacoes.ordena((a, b) => a[coluna] - b[coluna]); //enviando um critério para a classe ListaNegociacoes ordenar a lista
+        }
+        this._ordemAtual = coluna;
+
+
+    }
+
  
 }
