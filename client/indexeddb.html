@@ -84,6 +84,40 @@
 
         }
         
+        function listaTodos() {
+
+            let transaction = connection.transaction(['negociacoes'],'readwrite');
+            let store = transaction.objectStore('negociacoes');
+            let negociacoes = [];
+
+            let cursor = store.openCursor(); //o cursos percorrerá cada objeto dentro do Object storee
+
+            
+            cursor.onsuccess = e => {
+
+                    let atual = e.target.result; //lembrando que o e.tagert.result representa uma referencia para a instancia criada do Object Store
+                //importante: quando gravamos algo na Object store, estamos guardando no formato JSON
+                    if(atual) {
+
+                        let dado = atual.value; //o atual aqui pode ser comparado com o this. Ele refecnia cada objeto dentr do Objeto store, um de cada vez
+
+                        negociacoes.push(new Negociation(dado._data, dado._quantidade, dado._valor)); //lembrando que o Objecto store guarda, na verdade, as propriedades de um objeto, mas não o objeto em si
+                                                                                                    //por isso aqui instanciamos Neogiciation
+
+                        atual.continue(); //o continue pula para o próximo objeto dentro da store
+
+                    } else { 
+
+                        console.log(negociacoes);
+                    }
+
+                };
+        
+
+                cursor.onerror = e => {
+                    console.log('Error:' + e.target.error.name);
+                };
+            }
     </script>
 
 
