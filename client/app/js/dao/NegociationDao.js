@@ -1,5 +1,13 @@
 class NegociationDao {
 
+    /*
+    A vantagem do DAO: está ligada com a capacidade de isolar todo o código que acessa seu repositório de dados em um único lugar.
+    Assim, toda vez que o desenvolvedor precisar realizar operações de persistência ele verá que existe um único local para isso, seus DAO's.
+
+    O DAO faz parte da camada de persistência, funciona como uma fachada para a API do IndexedDB.
+    Repare que para usar o DAO não é preciso saber os detalhes do store ou cursor.
+    */
+
     constructor(connection) {
 
         this._connection = connection; //passando a conexão aberta a class ConnectionFactory
