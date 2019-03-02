@@ -13,7 +13,7 @@ var ConnectionFactory = (function () {
 
     const stores = ["negociacoes"];
     const dbName = "frame";
-    const version = 3;
+    const version = 5;
     var connection = null;
     var close = null;
 
@@ -42,7 +42,7 @@ var ConnectionFactory = (function () {
                         
                         //Vamos fazer um Monkey Patch para evitar que alguém feche a conexão diretamente.
                         //nesse caso vamos sobrescrever o método close, mas antes vamos salvar método dentro de uma variável para usarmos mais tarde
-                            close = connection.close();//.bind(connection);
+                            close = connection.close.bind(connection);
                             connection.close = function() {
                                 throw new Error ("você não pode fechar a conexão diretamente");
                             }
@@ -75,7 +75,7 @@ var ConnectionFactory = (function () {
 
             if (connection){
                close; //chamando a variável close que tem o método close dentro dela
-               connection = null;
+               connection = null; //como a conneção foi fechada, precisamos da um null para a variável perder a referencia da instancia e.target.result
             }
 
         }

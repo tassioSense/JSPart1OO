@@ -23,22 +23,50 @@ class NegociationController {
         this._mensagem = new Bind (new Mensagem(), this._mensagemView = new MensagemView($("#mensagemView")) , "texto");
                                                                                                             //aqui vamos fazer uso do Rest Operator
 
-
-        
+        ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociationDao(connection)
+            .listaTodos()
+            .then(negociacoes =>          
+                negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao))))
+            .catch(erro => {
+                 console.log(erro);
+                this._mensagem.texto = erro;
+            });    
+                
     }                       
 
 
     adiciona (event){
         event.preventDefault(); //para evitar que o form recarregue a pág;
 
-        let negociacao1 = this._criaNegociacao();
-        this._listaNegociacoes.adiciona(negociacao1);
-        
-        //this._negocicoesToView.update(this._listaNegociacoes); //aqui nossa Array tem valores, o que acionaram as tr e td do método _template
-        
-        this._mensagem.texto = "Adicionamos sua negociação. Obrigado :)"       
-        this._limpaFormulario();
+        let negociacao = this._criaNegociacao();
 
+        ConnectionFactory.getConnection()
+            .then(connection => {   
+
+                new NegociationDao(connection)
+                .adiciona(negociacao) //esse método adiciona se encarrega de gravar a negociacao no banco
+                .then(()=>{
+
+                    /* O fato de gravarmos no banco, não significa que os dados serão exibidos na tela,
+                    teremos que gravar também na _listaNegociacoes. 
+                    Com o data biding criado por nós, depois de adicionarmos a negociação na lista, ela será automaticamente refletida para o usuário.
+                    */
+                                    
+                    this._listaNegociacoes.adiciona(negociacao);
+                    
+                    //this._negocicoesToView.update(this._listaNegociacoes); //aqui nossa Array tem valores, o que acionaram as tr e td do método _template
+                    
+                    this._mensagem.texto = "Adicionamos sua negociação. Obrigado :)"
+                    this._limpaFormulario();
+
+                }).catch(erro =>{
+                    this.Mensagem = erro;
+                })
+
+
+            });
 
     }
 
@@ -121,8 +149,17 @@ class NegociationController {
     }
 
     apaga () {
-        this._listaNegociacoes.esvazia();
-        this._mensagem.texto = "Negociações apagadas";
+
+
+        ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociationDao(connection))
+            .then(dao => dao.apagaTudo())
+            .then(mensagem => {
+                this._mensagem.texto = mensagem;
+                this._listaNegociacoes.esvazia();
+            });
+        
     }
 
     ordena(coluna) {
