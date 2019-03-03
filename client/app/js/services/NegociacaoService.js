@@ -5,6 +5,20 @@ constructor() {
 
 }
 
+    cadastra(negociacao) {
+
+            
+        return ConnectionFactory
+        .getConnection()
+        .then(conexao => new NegociationDao(conexao)) 
+        .then(dao => dao.adiciona(negociacao))
+        .then(() => 'Negociação cadastrada com sucesso')
+        .catch(erro => {
+            throw new Error("Não foi possível adicionar a negociação")
+        });                      
+
+    }
+
     obterNegociacoesDaSemana() {
 
                 //Vamos fazer o importação do servidor remoto utilizando o padrão promise
@@ -62,6 +76,40 @@ constructor() {
                     reject('Não foi possível obter as negociações da semana retrasada');
                 })
         });
+    }
+
+    obterNegociacoes() {
+            return Promise.all([
+
+                this.obterNegociacoesDaSemana(),
+                this.obterNegociacoesDaSemanaAnterior(),
+                this.obterNegociacoesDaSemanaRetrasada()])
+                    .then(periodos => {
+
+                        let negociacoes = periodos
+                            .reduce((dados, periodos) => dados.concat(periodo), [])
+                            .map(dado => new Negociation (new Date(dado.data), dado.quantidade, dado.valor));
+
+                        return negociacoes;
+
+                    }).catch(erro =>{
+                        throw new Errorr (erro);
+                    })
+
+    }
+
+    importa(listaAtual) {
+
+        return this.obterNegociacoes()
+            .then(negociacoes =>
+                negociacoes.filter(negociacao =>
+                    !listaAtual.some(negociacaoExistente =>
+                        JSON.stringify(negociacao) == JSON.stringify(negociacaoExistente)))
+            )
+            .catch(erro => {
+                console.log(erro);
+                throw new Error("Não foi possível importar as negociações");
+            });
     }
 
      /*   

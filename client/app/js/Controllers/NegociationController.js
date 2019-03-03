@@ -23,6 +23,12 @@ class NegociationController {
         this._mensagem = new Bind (new Mensagem(), this._mensagemView = new MensagemView($("#mensagemView")) , "texto");
                                                                                                             //aqui vamos fazer uso do Rest Operator
 
+        
+         this._init();       
+    }                       
+
+    _init() {
+
         ConnectionFactory
             .getConnection()
             .then(connection => new NegociationDao(connection)
@@ -33,40 +39,22 @@ class NegociationController {
                  console.log(erro);
                 this._mensagem.texto = erro;
             });    
-                
-    }                       
 
+    }
 
     adiciona (event){
         event.preventDefault(); //para evitar que o form recarregue a pág;
 
         let negociacao = this._criaNegociacao();
 
-        ConnectionFactory.getConnection()
-            .then(connection => {   
+        new NegociacaoService()    
+            .cadastra(negociacao)
+            .then(mensagem => {
+                this._listaNegociacoes.adiciona(negociacao);
+                this._mensagem.texto = mensagem; 
+                this._limpaFormulario();  
+            }).catch(erro => this._mensagem.texto = erro);
 
-                new NegociationDao(connection)
-                .adiciona(negociacao) //esse método adiciona se encarrega de gravar a negociacao no banco
-                .then(()=>{
-
-                    /* O fato de gravarmos no banco, não significa que os dados serão exibidos na tela,
-                    teremos que gravar também na _listaNegociacoes. 
-                    Com o data biding criado por nós, depois de adicionarmos a negociação na lista, ela será automaticamente refletida para o usuário.
-                    */
-                                    
-                    this._listaNegociacoes.adiciona(negociacao);
-                    
-                    //this._negocicoesToView.update(this._listaNegociacoes); //aqui nossa Array tem valores, o que acionaram as tr e td do método _template
-                    
-                    this._mensagem.texto = "Adicionamos sua negociação. Obrigado :)"
-                    this._limpaFormulario();
-
-                }).catch(erro =>{
-                    this.Mensagem = erro;
-                })
-
-
-            });
 
     }
 
@@ -75,6 +63,7 @@ class NegociationController {
         let service = new NegociacaoService(); //deontro da classe temos new Promise
 
         //lembrando que promise são assicronas
+    
 
         Promise.all([service.obterNegociacoesDaSemana(), service.obterNegociacoesDaSemanaAnterior(), service.obterNegociacoesDaSemanaRetrasada()])
             .then(negociacoes => {
@@ -89,7 +78,7 @@ class NegociationController {
         
 
 
-    /*  COMENTADO PARA FINS DIDÁTICOS
+      /*COMENTADO PARA FINS DIDÁTICOS
 
         service.obterNegociacoesDaSemana((erro, negociacoes) => {
             if(erro) {

@@ -45,7 +45,7 @@ class NegociationDao {
             let cursor = this._connection
                 .transaction([this._store],'readwrite')
                 .objectStore(this._store)
-                .openCursor(); //o cursos percorrerá cada objeto dentro do Object storee
+                .openCursor(); //o cursor percorrerá cada objeto dentro do Object storee
             
             let negociacoes = [];
 
