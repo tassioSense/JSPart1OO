@@ -1,8 +1,27 @@
 class HttpService {
 
+    /*
+    é possível emularar com fidelidade o Fetch API, criando no escopo global do navegador esta funcionalidade.
+
+    Você pode usar este polyfill, baixando-o da pasta https://github.com/github/fetch/blob/master/fetch.js.
+     O script deve ser carregado como primeiro script da nossa página em body.
+    */
+
+    _handleErrors(res) {
+        if(!res.ok) throw new Error(res.statusText); //lança um erro caso status da res <> 200 a 299
+        return res; //retorna a resposta caso não dê erro
+    }
+
     get (url) {
 
-        return new Promise((resolve, reject) => {
+        return fetch(url)
+        .then(res => this._handleErrors(res)) //conferindo o status da respsota
+        .then(res => res.json()); //convertendo a resposta em json
+    
+    
+       /* COMO FARIAMOS ANTES DA FETCH API:
+       
+       return new Promise((resolve, reject) => {
 
             let xhr = new XMLHttpRequest();
 
@@ -28,13 +47,22 @@ class HttpService {
             }
 
             xhr.send();
-        });
+        }); */
+
 
     }    
 
         post(url, dado) {
 
+         
+            return fetch(url, {
+                headers: { 'Content-Type': 'application/json' },
+                method: 'post',
+                body: JSON.stringify(dado)
+            })
+            .then(res => this._handleErrors(res));
 
+        /* SEM USAR FETCH API
             return new Promise((resolve, reject) => {
     
                 let xhr = new XMLHttpRequest();
@@ -54,7 +82,7 @@ class HttpService {
                     }
                 };
                 xhr.send(JSON.stringify(dado)); // usando JSON.stringify para converter objeto em uma string no formato JSON.
-            });
+            }); */
     
         }          
 
